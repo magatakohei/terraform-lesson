@@ -31,6 +31,19 @@ resource "aws_subnet" "public_1a" {
   }
 }
 
+resource "aws_subnet" "public_1c" {
+  vpc_id                  = aws_vpc.example.id
+  cidr_block              = "10.0.2.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "ap-northeast-1c"
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-public-subnet-1c"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
 resource "aws_internet_gateway" "example" {
   vpc_id = aws_vpc.example.id
   tags = {
@@ -57,6 +70,11 @@ resource "aws_route" "public-igw" {
 
 resource "aws_route_table_association" "public_1a" {
   subnet_id      = aws_subnet.public_1a.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route_table_association" "public_1c" {
+  subnet_id      = aws_subnet.public_1c.id
   route_table_id = aws_route_table.public.id
 }
 
