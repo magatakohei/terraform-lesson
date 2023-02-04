@@ -1,12 +1,17 @@
 # Usage
 ```hcl
-module "example_sg" {
-  source = "./security_group"
-  name   = "${var.environment}-example-sg"
-  vpc_id = aws_vpc.example.id
-  ingress_ports = [
-    { port = "80", cidr_blocks = ["0.0.0.0/0"] },
-    { port = "443", cidr_blocks = ["0.0.0.0/0", "10.0.65.0/24"] }
-  ]
+data "aws_iam_policy_document" "allow_describe_regions" {
+  statement {
+    effect    = "Allow"
+    actions   = ["ec2:DescribeRegions"]
+    resources = ["*"]
+  }
+}
+
+module "describe_regions_for_ec2" {
+  source     = "./iam_role"
+  name       = "${var.project}-${var.environment}-describe-regions-for-ec2"
+  identifier = "ec2.amazonaws.com"
+  policy     = data.aws_iam_policy_document.allow_describe_regions.json
 }
 ```
