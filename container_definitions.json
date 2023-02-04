@@ -1,0 +1,13 @@
+[
+  {
+    "name": "nginx",
+    "image": "nginx:1.23.3",
+    "essential": true,
+    "portMappings": [
+      {
+        "protocol": "tcp",
+        "containerPort": 80
+      }
+    ]
+  }
+]
