@@ -11,7 +11,7 @@ resource "aws_ecs_task_definition" "example" {
   memory                   = "512"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  container_definitions    = file("./container_definitions.json")
+  container_definitions    = file("./container/container_definitions.json")
   execution_role_arn       = module.ecs_task_execution_role.iam_role_arn
 }
 
@@ -45,6 +45,22 @@ resource "aws_ecs_service" "example" {
   }
 }
 
+# ------------------------------
+# Scheduled Task
+# ------------------------------
+resource "aws_ecs_task_definition" "example_batch" {
+  family                   = "${var.project}-${var.environment}-batch"
+  cpu                      = "256"
+  memory                   = "512"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  container_definitions    = file("./container/batch_container_definitions.json")
+  execution_role_arn       = module.ecs_task_execution_role.iam_role_arn
+}
+
+# ------------------------------
+# IAM Role
+# ------------------------------
 data "aws_iam_policy" "ecs_task_execution_role_policy" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
@@ -66,6 +82,20 @@ module "ecs_task_execution_role" {
   policy     = data.aws_iam_policy_document.ecs_task_execution.json
 }
 
+data "aws_iam_policy" "ecs_events_role_policy" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceEventsRole"
+}
+
+module "ecs_events_role" {
+  source     = "./iam_role"
+  name       = "ecs-events"
+  identifier = "events.amazonaws.com"
+  policy     = data.aws_iam_policy.ecs_events_role_policy.policy
+}
+
+# ------------------------------
+# security group
+# ------------------------------
 module "nginx_sg" {
   source = "./security_group"
   name   = "${var.environment}-nginx-sg"
