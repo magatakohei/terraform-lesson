@@ -12,6 +12,7 @@ resource "aws_ecs_task_definition" "example" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   container_definitions    = file("./container_definitions.json")
+  execution_role_arn       = module.ecs_task_execution_role.iam_role_arn
 }
 
 resource "aws_ecs_service" "example" {
@@ -20,7 +21,7 @@ resource "aws_ecs_service" "example" {
   task_definition                   = aws_ecs_task_definition.example.arn
   desired_count                     = 2
   launch_type                       = "FARGATE"
-  platform_version                  = "1.3.0"
+  platform_version                  = "1.4.0"
   health_check_grace_period_seconds = 60
 
   network_configuration {
@@ -42,6 +43,27 @@ resource "aws_ecs_service" "example" {
   lifecycle {
     ignore_changes = [task_definition]
   }
+}
+
+data "aws_iam_policy" "ecs_task_execution_role_policy" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+data "aws_iam_policy_document" "ecs_task_execution" {
+  source_json = data.aws_iam_policy.ecs_task_execution_role_policy.policy
+
+  statement {
+    effect    = "Allow"
+    actions   = ["ssm:GetParameters", "kms:Decrypt"]
+    resources = ["*"]
+  }
+}
+
+module "ecs_task_execution_role" {
+  source     = "./iam_role"
+  name       = "ecs-task-execution"
+  identifier = "ecs-tasks.amazonaws.com"
+  policy     = data.aws_iam_policy_document.ecs_task_execution.json
 }
 
 module "nginx_sg" {
