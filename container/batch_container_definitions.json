@@ -11,6 +11,20 @@
         "awslogs-group": "/dev/ecs-scheduled-tasks/example"
       }
     },
-    "command": ["/bin/date"]
+    "secrets": [
+      {
+        "name": "DB_NAME",
+        "valueFrom": "/dev/database/name"
+      },
+      {
+        "name": "DB_USERNAME",
+        "valueFrom": "/dev/database/username"
+      },
+      {
+        "name": "DB_PASSWORD",
+        "valueFrom": "/dev/database/password"
+      }
+    ],
+    "command": ["/usr/bin/env"]
   }
 ]
