@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "codebuild" {
       "logs:CreateLogStream",
       "logs:PutLogEvents",
       "ecr:GetAuthorizationToken",
-      "ecr:BatchCheckLayerAvalability",
+      "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
       "ecr:DescribeRepositories",
       "ecr:ListImages",
