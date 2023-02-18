@@ -6,7 +6,7 @@ resource "aws_ecs_cluster" "example" {
 }
 
 resource "aws_ecs_task_definition" "example" {
-  family                   = "${var.project}-${var.environment}-task"
+  family                   = "${var.project}-${var.environment}-ecr"
   cpu                      = "256"
   memory                   = "512"
   network_mode             = "awsvpc"
@@ -36,8 +36,8 @@ resource "aws_ecs_service" "example" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs_fargate.arn
-    container_name   = "nginx"
-    container_port   = 80
+    container_name   = "terraform-lesson-dev-ecr"
+    container_port   = 8080
   }
 
   lifecycle {
@@ -101,6 +101,6 @@ module "nginx_sg" {
   name   = "${var.environment}-nginx-sg"
   vpc_id = aws_vpc.example.id
   ingress_ports = [
-    { port = "80", cidr_blocks = ["0.0.0.0/0"] },
+    { port = "8080", cidr_blocks = ["0.0.0.0/0"] },
   ]
 }

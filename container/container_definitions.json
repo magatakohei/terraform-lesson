@@ -1,20 +1,21 @@
 [
   {
-    "name": "nginx",
+    "name": "terraform-lesson-dev-ecr",
     "image": "nginx:1.23.3",
     "essential": true,
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
         "awslogs-region": "ap-northeast-1",
-        "awslogs-stream-prefix": "nginx",
-        "awslogs-group": "/dev/nginx/web"
+        "awslogs-stream-prefix": "app",
+        "awslogs-group": "/dev/app/web"
       }
     },
     "portMappings": [
       {
         "protocol": "tcp",
-        "containerPort": 80
+        "containerPort": 8080,
+        "hostPort": 8080
       }
     ]
   }

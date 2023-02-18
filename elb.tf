@@ -116,18 +116,18 @@ resource "aws_lb_target_group" "ecs_fargate" {
   name                 = "${var.environment}-ecs-fargate"
   target_type          = "ip"
   vpc_id               = aws_vpc.example.id
-  port                 = 80
+  port                 = 8080
   protocol             = "HTTP"
   deregistration_delay = 300
 
   health_check {
-    path                = "/"
+    path                = "/greeting/maga"
     healthy_threshold   = 5
     unhealthy_threshold = 2
     timeout             = 5
     interval            = 30
     matcher             = 200
-    port                = "traffic-port"
+    port                = 8080
     protocol            = "HTTP"
   }
 
