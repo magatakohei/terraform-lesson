@@ -98,3 +98,24 @@ data "aws_iam_policy_document" "alb_log" {
     }
   }
 }
+
+# ------------------------------
+# s3 for operation server
+# ------------------------------
+resource "aws_s3_bucket" "operation" {
+  bucket = "${var.project}-${var.environment}-operation-pragmatic-${random_string.s3_unique_key.result}"
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "operation" {
+  bucket = aws_s3_bucket.operation.id
+
+  rule {
+    id = "expiration-rule"
+
+    status = "Enabled"
+
+    expiration {
+      days = "180"
+    }
+  }
+}
