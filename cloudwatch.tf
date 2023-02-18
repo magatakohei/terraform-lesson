@@ -11,6 +11,11 @@ resource "aws_cloudwatch_log_group" "for_ecs_scheduled_tasks" {
   retention_in_days = 180
 }
 
+resource "aws_cloudwatch_log_group" "operation" {
+  name              = "/operation"
+  retention_in_days = 180
+}
+
 # ------------------------------
 # event rule
 # ------------------------------
