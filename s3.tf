@@ -119,3 +119,24 @@ resource "aws_s3_bucket_lifecycle_configuration" "operation" {
     }
   }
 }
+
+# ------------------------------
+# s3 for logging persistence
+# ------------------------------
+resource "aws_s3_bucket" "cloudwatch_logs" {
+  bucket = "${var.project}-${var.environment}-cloudwatch-logs-${random_string.s3_unique_key.result}"
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "cloudwatch_logs" {
+  bucket = aws_s3_bucket.cloudwatch_logs.id
+
+  rule {
+    id = "expiration-rule"
+
+    status = "Enabled"
+
+    expiration {
+      days = "180"
+    }
+  }
+}
